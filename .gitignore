@@ -12,6 +12,10 @@ outputs/
 generated_images/
 results/
 logs/*.log
+data/generated/
+data/detections/
+data/results/
+reports/
 
 # Large model/cache files
 models/

@@ -1,0 +1,13 @@
+# Stage 0A minimal configuration.
+# The current implementation uses argparse defaults and keeps this file as a readable run record.
+num_prompts: 20
+num_images_per_prompt: 1
+generation_mode: placeholder
+detector_mode: stub
+prompts_path: data/prompts/stage0a_sanity_prompts.jsonl
+generated_dir: data/generated/stage0a
+detections_path: data/detections/stage0a/detections.jsonl
+metrics_path: data/results/stage0a/metrics.jsonl
+summary_path: data/results/stage0a/summary.json
+report_path: reports/metric_sanity_report.md
+
