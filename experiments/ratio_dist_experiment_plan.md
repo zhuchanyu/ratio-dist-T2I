@@ -226,6 +226,39 @@ Splits:
 
 ## 7. Benchmark Prompt Templates
 
+### Benchmark Usage Strategy
+
+This project should not use only a custom dataset.
+
+Existing benchmarks should be used for comparability and auxiliary evaluation, including:
+
+- GenEval;
+- T2I-CompBench Spatial;
+- VISOR/SR2D;
+- GeckoNum;
+- CLIPScore or ImageReward.
+
+These benchmarks are useful for connecting the project to prior T2I evaluation, checking object existence, coarse spatial relations, numerical prompt following, general prompt-image alignment, and image preference. However, they cannot directly and sufficiently evaluate size ratio, distance ratio, equal spacing, or boundary fraction. In the current three-stage execution plan, only size ratio and boundary fraction are implemented, but the broader RatioDistGraph problem should still state that existing benchmarks do not sufficiently cover continuous geometric constraints.
+
+`RatioDistBench-MVP` is therefore a supplementary benchmark. Its role is to fill the missing continuous-geometric-constraint evaluation for size ratio and boundary fraction in the first execution version, not to replace existing benchmarks.
+
+The first-stage custom dataset should contain only 50 prompts:
+
+- 25 size-ratio prompts;
+- 25 boundary-fraction prompts.
+
+If existing benchmarks contain reusable prompts or subtasks, those prompts should be reused or minimally rewritten where possible instead of creating everything from scratch.
+
+The custom benchmark must publicly report:
+
+- prompt templates;
+- object categories;
+- ratio and fraction values;
+- evaluation scripts;
+- human validation protocol.
+
+In paper writing, do not claim that the custom benchmark replaces existing benchmarks. It should be described only as a supplement to existing benchmarks for continuous geometric constraints.
+
 ### Two-Object Size Ratio
 
 ```text
