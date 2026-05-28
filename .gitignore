@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+
+# Experiment outputs
+outputs/
+generated_images/
+results/
+logs/*.log
+
+# Large model/cache files
+models/
+checkpoints/
+*.ckpt
+*.safetensors
+*.pt
+*.pth
+*.bin
+
+# HuggingFace / cache
+.cache/
+huggingface/
+wandb/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.bak
+# ARIS generated tool directories
+.agents/
+.aris/
+
