@@ -1,0 +1,19 @@
+{
+  "status": "prompt_preparation_only",
+  "stage": "stage1_exploratory_baseline_prompt_preparation",
+  "formal_stage1_entry": false,
+  "reason": "Stage 0 metric sanity must pass before formal Stage 1 conclusions.",
+  "num_prompts": 50,
+  "seed": 17,
+  "files": {
+    "base": "data\\prompts\\stage1\\stage1_base_prompts.jsonl",
+    "sdxl_direct": "data\\prompts\\stage1\\sdxl_direct_prompts.jsonl",
+    "strong_prompt": "data\\prompts\\stage1\\strong_prompt_prompts.jsonl",
+    "rejection_sampling_candidates": "data\\prompts\\stage1\\rejection_sampling_candidates_prompts.jsonl"
+  },
+  "baselines": [
+    "sdxl_direct",
+    "strong_prompt",
+    "rejection_sampling_candidates"
+  ]
+}

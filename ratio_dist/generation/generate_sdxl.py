@@ -24,7 +24,7 @@ def _write_placeholder_ppm(path: Path, width: int = 256, height: int = 256) -> N
             f.write("\n")
 
 
-def generate_placeholder(prompts, output_dir, num_images_per_prompt):
+def generate_placeholder(prompts, output_dir, num_images_per_prompt, method_name="sdxl_direct_placeholder"):
     records = []
     image_dir = output_dir / "images"
     for prompt in prompts:
@@ -39,7 +39,7 @@ def generate_placeholder(prompts, output_dir, num_images_per_prompt):
                     "prompt_id": prompt["prompt_id"],
                     "prompt": prompt["prompt"],
                     "task_type": prompt["task_type"],
-                    "method": "sdxl_direct_placeholder",
+                    "method": method_name,
                     "image_path": str(image_path),
                     "sample_idx": sample_idx,
                     "status": "placeholder_image",
@@ -48,7 +48,7 @@ def generate_placeholder(prompts, output_dir, num_images_per_prompt):
     return records
 
 
-def generate_sdxl_no_download(prompts, output_dir, num_images_per_prompt, model_path=None):
+def generate_sdxl_no_download(prompts, output_dir, num_images_per_prompt, model_path=None, method_name="sdxl_direct"):
     try:
         import torch  # type: ignore
         from diffusers import StableDiffusionXLPipeline  # type: ignore
@@ -70,7 +70,12 @@ def generate_sdxl_no_download(prompts, output_dir, num_images_per_prompt, model_
     if not path.exists():
         raise RuntimeError(f"Local model path does not exist: {model_path}. This script will not auto-download models.")
 
-    pipe = StableDiffusionXLPipeline.from_pretrained(str(path), local_files_only=True)
+    pipe = StableDiffusionXLPipeline.from_pretrained(
+        str(path),
+        local_files_only=True,
+        torch_dtype=torch.float16,
+        use_safetensors=True,
+    )
     pipe = pipe.to("cuda")
     records = []
     image_dir = output_dir / "images"
@@ -88,7 +93,7 @@ def generate_sdxl_no_download(prompts, output_dir, num_images_per_prompt, model_
                     "prompt_id": prompt["prompt_id"],
                     "prompt": prompt["prompt"],
                     "task_type": prompt["task_type"],
-                    "method": "sdxl_direct",
+                    "method": method_name,
                     "image_path": str(image_path),
                     "sample_idx": sample_idx,
                     "status": "generated",
@@ -103,13 +108,14 @@ def run_generation(
     num_images_per_prompt=1,
     generation_mode="placeholder",
     model_path=None,
+    method_name=None,
 ):
     prompts = read_jsonl(prompts_path)
     output_dir = Path(output_dir)
     if generation_mode == "placeholder":
-        records = generate_placeholder(prompts, output_dir, num_images_per_prompt)
+        records = generate_placeholder(prompts, output_dir, num_images_per_prompt, method_name or "sdxl_direct_placeholder")
     elif generation_mode == "sdxl":
-        records = generate_sdxl_no_download(prompts, output_dir, num_images_per_prompt, model_path)
+        records = generate_sdxl_no_download(prompts, output_dir, num_images_per_prompt, model_path, method_name or "sdxl_direct")
     else:
         raise ValueError(f"Unsupported generation_mode: {generation_mode}")
     write_jsonl(output_dir / "generations.jsonl", records)
@@ -123,6 +129,7 @@ def main() -> None:
     parser.add_argument("--num-images-per-prompt", type=int, default=1)
     parser.add_argument("--generation-mode", choices=["placeholder", "sdxl"], default="placeholder")
     parser.add_argument("--model-path", default=None)
+    parser.add_argument("--method-name", default=None)
     args = parser.parse_args()
     try:
         records = run_generation(
@@ -131,6 +138,7 @@ def main() -> None:
             args.num_images_per_prompt,
             args.generation_mode,
             args.model_path,
+            args.method_name,
         )
     except RuntimeError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
